@@ -4,7 +4,7 @@ import jobReducer from './reducers/jobReducer';
 import { mockJobs, mockStats } from '../utils/mockData';
 
 // Flag to use mock data when API is unavailable
-const USE_MOCK_DATA = true; // Set to false when your backend is ready
+const USE_MOCK_DATA = false; // Set to false to use real database
 
 // Initial state
 const initialState = {
@@ -32,47 +32,33 @@ export const JobProvider = ({ children }) => {
   // Get Jobs
   const getJobs = async () => {
     try {
+      dispatch({ type: 'STATS_LOADING' });
+      
       if (USE_MOCK_DATA) {
         // Use mock data
-        const stats = mockStats;
-        
         setTimeout(() => {
           dispatch({
             type: 'GET_JOBS',
             payload: mockJobs,
-            stats,
           });
-        }, 500); // Simulate network delay
+        }, 500);
       } else {
-        const res = await axios.get('/api/jobs');
-
-        // Calculate stats
-        const stats = {
-          applied: 0,
-          interview: 0,
-          offer: 0,
-          rejected: 0,
-          saved: 0,
-        };
-
-        res.data.forEach((job) => {
-          stats[job.status.toLowerCase()]++;
-        });
-
-        dispatch({
-          type: 'GET_JOBS',
-          payload: res.data,
-          stats,
-        });
+        const res = await axios.get('http://localhost:5000/api/jobs');
+        
+        if (res.data) {
+          dispatch({
+            type: 'GET_JOBS',
+            payload: res.data,
+          });
+        } else {
+          throw new Error('No data received from server');
+        }
       }
     } catch (err) {
       console.error('Error fetching jobs:', err);
-      
-      // Fallback to mock data on error
       dispatch({
-        type: 'GET_JOBS',
-        payload: mockJobs,
-        stats: mockStats,
+        type: 'JOB_ERROR',
+        payload: err.response?.data?.msg || 'Error fetching jobs',
       });
     }
   };
@@ -80,41 +66,36 @@ export const JobProvider = ({ children }) => {
   // Get Job
   const getJob = async (id) => {
     try {
+      dispatch({ type: 'STATS_LOADING' });
+      
       if (USE_MOCK_DATA) {
-        // Use mock data
         const job = mockJobs.find(job => job._id === id);
-        
-        setTimeout(() => {
+        if (job) {
           dispatch({
             type: 'GET_JOB',
             payload: job,
           });
-        }, 500); // Simulate network delay
+        } else {
+          throw new Error('Job not found');
+        }
       } else {
-        const res = await axios.get(`/api/jobs/${id}`);
-
-        dispatch({
-          type: 'GET_JOB',
-          payload: res.data,
-        });
+        const res = await axios.get(`http://localhost:5000/api/jobs/${id}`);
+        
+        if (res.data) {
+          dispatch({
+            type: 'GET_JOB',
+            payload: res.data,
+          });
+        } else {
+          throw new Error('Job not found');
+        }
       }
     } catch (err) {
       console.error('Error fetching job:', err);
-      
-      // Fallback to mock data on error
-      const job = mockJobs.find(job => job._id === id);
-      
-      if (job) {
-        dispatch({
-          type: 'GET_JOB',
-          payload: job,
-        });
-      } else {
-        dispatch({
-          type: 'JOB_ERROR',
-          payload: 'Job not found',
-        });
-      }
+      dispatch({
+        type: 'JOB_ERROR',
+        payload: err.response?.data?.msg || 'Error fetching job',
+      });
     }
   };
 
@@ -127,8 +108,9 @@ export const JobProvider = ({ children }) => {
     };
 
     try {
+      dispatch({ type: 'STATS_LOADING' });
+      
       if (USE_MOCK_DATA) {
-        // Create a mock job with ID
         const newJob = {
           ...job,
           _id: String(mockJobs.length + 1),
@@ -142,20 +124,25 @@ export const JobProvider = ({ children }) => {
           });
         }, 500);
       } else {
-        const res = await axios.post('/api/jobs', job, config);
-
-        dispatch({
-          type: 'ADD_JOB',
-          payload: res.data,
-        });
+        const res = await axios.post('http://localhost:5000/api/jobs', job, config);
+        
+        if (res.data) {
+          dispatch({
+            type: 'ADD_JOB',
+            payload: res.data,
+          });
+          return true; // Return success
+        } else {
+          throw new Error('Failed to add job');
+        }
       }
     } catch (err) {
       console.error('Error adding job:', err);
-      
       dispatch({
         type: 'JOB_ERROR',
         payload: err.response?.data?.msg || 'Error adding job',
       });
+      return false; // Return failure
     }
   };
 
@@ -168,8 +155,9 @@ export const JobProvider = ({ children }) => {
     };
 
     try {
+      dispatch({ type: 'STATS_LOADING' });
+      
       if (USE_MOCK_DATA) {
-        // Update mock job
         const updatedJob = {
           ...job,
           applicationDate: new Date(job.applicationDate),
@@ -182,28 +170,34 @@ export const JobProvider = ({ children }) => {
           });
         }, 500);
       } else {
-        const res = await axios.put(`/api/jobs/${job._id}`, job, config);
-
-        dispatch({
-          type: 'UPDATE_JOB',
-          payload: res.data,
-        });
+        const res = await axios.put(`http://localhost:5000/api/jobs/${job._id}`, job, config);
+        
+        if (res.data) {
+          dispatch({
+            type: 'UPDATE_JOB',
+            payload: res.data,
+          });
+          return true; // Return success
+        } else {
+          throw new Error('Failed to update job');
+        }
       }
     } catch (err) {
       console.error('Error updating job:', err);
-      
       dispatch({
         type: 'JOB_ERROR',
         payload: err.response?.data?.msg || 'Error updating job',
       });
+      return false; // Return failure
     }
   };
 
   // Delete Job
   const deleteJob = async (id) => {
     try {
+      dispatch({ type: 'STATS_LOADING' });
+      
       if (USE_MOCK_DATA) {
-        // Delete from mock data
         setTimeout(() => {
           dispatch({
             type: 'DELETE_JOB',
@@ -211,20 +205,25 @@ export const JobProvider = ({ children }) => {
           });
         }, 500);
       } else {
-        await axios.delete(`/api/jobs/${id}`);
-
-        dispatch({
-          type: 'DELETE_JOB',
-          payload: id,
-        });
+        const res = await axios.delete(`http://localhost:5000/api/jobs/${id}`);
+        
+        if (res.status === 200) {
+          dispatch({
+            type: 'DELETE_JOB',
+            payload: id,
+          });
+          return true; // Return success
+        } else {
+          throw new Error('Failed to delete job');
+        }
       }
     } catch (err) {
       console.error('Error deleting job:', err);
-      
       dispatch({
         type: 'JOB_ERROR',
         payload: err.response?.data?.msg || 'Error deleting job',
       });
+      return false; // Return failure
     }
   };
 

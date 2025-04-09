@@ -1,10 +1,29 @@
+// Helper function to calculate stats
+const calculateStats = (jobs) => {
+  const stats = {
+    applied: 0,
+    interview: 0,
+    offer: 0,
+    rejected: 0,
+    saved: 0, // Assuming 'saved' is a possible status
+  };
+
+  jobs.forEach((job) => {
+    const status = job.status?.toLowerCase(); // Add null check for status
+    if (status && stats.hasOwnProperty(status)) {
+      stats[status]++;
+    }
+  });
+  return stats;
+};
+
 const jobReducer = (state, action) => {
   switch (action.type) {
     case 'GET_JOBS':
       return {
         ...state,
         jobs: action.payload,
-        stats: action.stats,
+        stats: calculateStats(action.payload),
         loading: false,
       };
     case 'GET_JOB':
@@ -13,12 +32,15 @@ const jobReducer = (state, action) => {
         job: action.payload,
         loading: false,
       };
-    case 'ADD_JOB':
+    case 'ADD_JOB': {
+      const updatedJobs = [action.payload, ...state.jobs];
       return {
         ...state,
-        jobs: [action.payload, ...state.jobs],
+        jobs: updatedJobs,
+        stats: calculateStats(updatedJobs),
         loading: false,
       };
+    }
     case 'UPDATE_JOB':
       return {
         ...state,
@@ -27,12 +49,15 @@ const jobReducer = (state, action) => {
         ),
         loading: false,
       };
-    case 'DELETE_JOB':
+    case 'DELETE_JOB': {
+      const updatedJobs = state.jobs.filter((job) => job._id !== action.payload);
       return {
         ...state,
-        jobs: state.jobs.filter((job) => job._id !== action.payload),
+        jobs: updatedJobs,
+        stats: calculateStats(updatedJobs),
         loading: false,
       };
+    }
     case 'CLEAR_JOBS':
       return {
         ...state,
