@@ -4,24 +4,19 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const path = require('path');
 
-// Load env variables
 dotenv.config();
 
 const app = express();
 
-// Connect to database
 connectDB();
 
-// Middleware
 app.use(express.json());
 app.use(cors());
 
-// Define routes
 app.use('/api/users', require('./routes/users'));
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/jobs', require('./routes/jobs'));
 
-// Serve static assets in production
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static('dist'));
   
