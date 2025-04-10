@@ -43,10 +43,14 @@ const JobDetail = () => {
     });
   };
 
-  const onDelete = () => {
+  const onDelete = async () => {
     if (window.confirm('Are you sure you want to delete this job?')) {
-      deleteJob(id);
-      navigate('/dashboard');
+      const success = await deleteJob(id);
+      if (success) {
+        navigate('/dashboard');
+      } else {
+        alert('Failed to delete job. Please try again.');
+      }
     }
   };
 
