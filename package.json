@@ -39,5 +39,8 @@
     "concurrently": "^9.1.2",
     "nodemon": "^3.1.9",
     "vite": "^6.2.5"
+  },
+  "engines": {
+    "node": ">=18.x"
   }
 }
