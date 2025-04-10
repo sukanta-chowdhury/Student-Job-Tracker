@@ -1,8 +1,8 @@
 import React, { createContext, useReducer, useEffect } from 'react';
-import axios from 'axios';
 import authReducer from './reducers/authReducer';
 import setAuthToken from '../utils/setAuthToken';
 import { mockUser } from '../utils/mockData';
+import api from '../utils/api';
 
 // Flag to use mock data when API is unavailable
 const USE_MOCK_DATA = false; // Set to false to use real authentication
@@ -37,7 +37,7 @@ export const AuthProvider = ({ children }) => {
       const token = localStorage.getItem('token');
       if (token) {
         setAuthToken(token);
-        const res = await axios.get('/api/auth');
+        const res = await api.get('/api/auth');
         dispatch({
           type: 'USER_LOADED',
           payload: res.data,
@@ -82,7 +82,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     try {
-      const res = await axios.post('/api/users', formData, config);
+      const res = await api.post('/api/users', formData);
       dispatch({
         type: 'REGISTER_SUCCESS',
         payload: res.data,
@@ -132,7 +132,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     try {
-      const res = await axios.post('/api/auth', formData, config);
+      const res = await api.post('/api/auth', formData);
       dispatch({
         type: 'LOGIN_SUCCESS',
         payload: res.data,

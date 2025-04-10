@@ -1,7 +1,7 @@
 import React, { createContext, useReducer } from 'react';
-import axios from 'axios';
 import jobReducer from './reducers/jobReducer';
 import { mockJobs, mockStats } from '../utils/mockData';
+import api from '../utils/api';
 
 // Flag to use mock data when API is unavailable
 const USE_MOCK_DATA = false; // Set to false to use real database
@@ -43,7 +43,7 @@ export const JobProvider = ({ children }) => {
           });
         }, 500);
       } else {
-        const res = await axios.get('http://localhost:5000/api/jobs');
+        const res = await api.get('/api/jobs');
         
         if (res.data) {
           dispatch({
@@ -79,7 +79,7 @@ export const JobProvider = ({ children }) => {
           throw new Error('Job not found');
         }
       } else {
-        const res = await axios.get(`http://localhost:5000/api/jobs/${id}`);
+        const res = await api.get(`/api/jobs/${id}`);
         
         if (res.data) {
           dispatch({
@@ -101,11 +101,6 @@ export const JobProvider = ({ children }) => {
 
   // Add Job
   const addJob = async (job) => {
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    };
 
     try {
       dispatch({ type: 'STATS_LOADING' });
@@ -124,7 +119,7 @@ export const JobProvider = ({ children }) => {
           });
         }, 500);
       } else {
-        const res = await axios.post('http://localhost:5000/api/jobs', job, config);
+        const res = await api.post('/api/jobs', job);
         
         if (res.data) {
           dispatch({
@@ -148,11 +143,6 @@ export const JobProvider = ({ children }) => {
 
   // Update Job
   const updateJob = async (job) => {
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    };
 
     try {
       dispatch({ type: 'STATS_LOADING' });
@@ -170,7 +160,7 @@ export const JobProvider = ({ children }) => {
           });
         }, 500);
       } else {
-        const res = await axios.put(`http://localhost:5000/api/jobs/${job._id}`, job, config);
+        const res = await api.put(`/api/jobs/${job._id}`, job);
         
         if (res.data) {
           dispatch({
@@ -205,7 +195,7 @@ export const JobProvider = ({ children }) => {
           });
         }, 500);
       } else {
-        const res = await axios.delete(`http://localhost:5000/api/jobs/${id}`);
+        const res = await api.delete(`/api/jobs/${id}`);
         
         if (res.status === 200) {
           dispatch({
