@@ -14,49 +14,46 @@ A full-stack MERN (MongoDB, Express, React, Node.js) application designed for st
 ## Technology Stack
 
 ### Frontend
-- React
-- React Router for routing
+- React.js
 - Context API for state management
-- Axios for API requests
-- CSS for styling
+- React Router for navigation
+- Modern ES6+ JavaScript
+- CSS3 with responsive design
 
 ### Backend
 - Node.js
-- Express.js framework
-- MongoDB database
-- Mongoose ODM
+- Express.js
+- MongoDB with Mongoose
 - JWT for authentication
-- Bcrypt for password hashing
+- RESTful API architecture
 
-## Getting Started
-
-### Prerequisites
-- Node.js and npm installed
-- MongoDB installed locally or access to MongoDB Atlas
-
-### Installation
+## Installation
 
 1. Clone the repository
-```
+```bash
 git clone https://github.com/sukanta-chowdhury/Student-Job-Tracker.git
 cd Student-Job-Tracker
 ```
 
-2. Install dependencies for server and client
-```
+2. Install dependencies
+```bash
+# Install server dependencies
+npm install
+
+# Install client dependencies
+cd client
 npm install
 ```
 
-3. Set up environment variables
-Create a `.env` file in the root directory with the following:
-```
-PORT=5000
-MONGO_URI=your_mongodb_connection_string
+3. Configure environment variables
+```bash
+# Create a .env file in the root directory
+MONGODB_URI=your_mongodb_uri
 JWT_SECRET=your_jwt_secret
 ```
 
 4. Run the application
-```
+```bash
 # Run both server and client concurrently
 npm run dev
 
@@ -69,26 +66,26 @@ npm run client
 
 ## API Endpoints
 
-### Auth
-- `POST /api/users` - Register a user
+### Authentication
+- `POST /api/users` - Register a new user
 - `POST /api/auth` - Authenticate user & get token
-- `GET /api/auth` - Get logged in user
+- `GET /api/auth` - Get logged in user data
 
-### Jobs
+### Job Management
 - `GET /api/jobs` - Get all jobs for a user
-- `GET /api/jobs/:id` - Get specific job
-- `POST /api/jobs` - Create a job
-- `PUT /api/jobs/:id` - Update a job
-- `DELETE /api/jobs/:id` - Delete a job
-
-## Future Enhancements
-
-- Drag and drop interface for status updates
-- Email notifications for job application updates
-- Calendar integration for interview scheduling
-- Resume/cover letter storage
-- Analytics and insights for application patterns
+- `GET /api/jobs/:id` - Get specific job details
+- `POST /api/jobs` - Create a new job entry
+- `PUT /api/jobs/:id` - Update job information
+- `DELETE /api/jobs/:id` - Delete a job entry
 
 ## License
 
 This project is licensed under the MIT License
+
+## Author
+
+Sukanta Chowdhury
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.

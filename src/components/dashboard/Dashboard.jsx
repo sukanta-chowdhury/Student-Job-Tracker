@@ -61,8 +61,8 @@ const Dashboard = () => {
   }
 
   return (
-    <div className='dashboard'>
-      <h1>Job Application Dashboard</h1>
+    <div className='dashboard' >
+      <h1> Dashboard </h1>
       {user && <h2>Welcome, {user.name}</h2>}
       
       <div className='dashboard-stats'>
